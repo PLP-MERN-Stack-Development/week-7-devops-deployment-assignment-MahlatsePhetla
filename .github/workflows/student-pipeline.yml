@@ -2,66 +2,81 @@ name: Student CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
-      - develop
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  frontend:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./client
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install Frontend Dependencies
-        run: npm ci
-
-      - name: Lint Frontend
-        run: npm run lint
-
-      - name: Test Frontend
-        run: npm test
-
-      - name: Build Frontend
-        run: npm run build
-
+  # Backend job
   backend:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./server
-
-    services:
-      mongodb:
-        image: mongo:4.4
-        ports:
-          - 27017:27017
-
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: '18'
 
-      - name: Install Backend Dependencies
-        run: npm ci
+      - name: Install pnpm globally
+        run: npm install -g pnpm
 
-      - name: Lint Backend
-        run: npm run lint
+      - name: Install backend dependencies
+        run: |
+          cd server
+          pnpm install --frozen-lockfile
 
-      - name: Test Backend
-        run: npm test
+      - name: Lint backend
+        run: |
+          cd server
+          pnpm run lint
+
+      - name: Run backend tests
+        run: |
+          cd server
+          pnpm test
         env:
           CI: true
           MONGODB_URI: mongodb://localhost:27017/test
           JWT_SECRET: test_secret
+
+      - name: Build backend
+        run: |
+          cd server
+          pnpm run build
+
+  # Frontend job
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install pnpm globally
+        run: npm install -g pnpm
+
+      - name: Install frontend dependencies
+        run: |
+          cd client
+          pnpm install --frozen-lockfile
+
+      - name: Lint frontend
+        run: |
+          cd client
+          pnpm run lint
+
+      - name: Run frontend tests
+        run: |
+          cd client
+          pnpm test
+        env:
+          CI: true
+
+      - name: Build frontend
+        run: |
+          cd client
+          pnpm run build
