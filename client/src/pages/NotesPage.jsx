@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import API from '../services/api';
 
@@ -8,7 +7,7 @@ const NotesPage = () => {
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Fetch notes on component mount
+  
   useEffect(() => {
     const fetchNotes = async () => {
       try {
@@ -16,6 +15,7 @@ const NotesPage = () => {
         const res = await API.get('/notes');
         setNotes(res.data);
       } catch (err) {
+        console.error(err); 
         alert('Failed to load notes');
       } finally {
         setLoading(false);
@@ -34,17 +34,19 @@ const NotesPage = () => {
       setTitle('');
       setContent('');
     } catch (err) {
+      console.error(err); // ✅ log the error
       alert('Failed to add note');
     }
   };
 
-  // Handle note deletion
+  
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this note?')) return;
     try {
       await API.delete(`/notes/${id}`);
       setNotes(notes.filter((note) => note._id !== id));
     } catch (err) {
+      console.error(err); 
       alert('Failed to delete note');
     }
   };
