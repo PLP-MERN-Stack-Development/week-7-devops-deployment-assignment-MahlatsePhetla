@@ -53,6 +53,6 @@ Start Command: npm start
 
 # Deploy the service.
 
-Copy the generated URL (e.g., https://your-backend.onrender.com) for frontend configuration.
-
+FRONTEND_URL:https://week-7-devops-deployment-assignment-eight.vercel.app
+BACKEND_URL:https://week-7-devops-deployment-assignment-uwlk.onrender.com
 
