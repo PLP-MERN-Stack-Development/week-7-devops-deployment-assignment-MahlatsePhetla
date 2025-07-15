@@ -2,8 +2,9 @@ name: Deploy to Staging
 
 on:
   push:
-    branches:
-      - develop   # Change to your staging branch if needed
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
 
 jobs:
   test-and-build:
